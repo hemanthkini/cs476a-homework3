@@ -1051,7 +1051,7 @@ class Breath : public dsp {
 			fRec31[0] = ((fRec32[1] * fTemp29) + (fTemp28 * fTemp32));
 			fRec30[0] = ((fTemp28 * fTemp31) + (fRec31[1] * fTemp29));
 			fRec36[0] = ((0.999f * fRec36[1]) + fSlow30);
-			output0[i] = (FAUSTFLOAT)(((1.5f * (fRec0[(IOTA-0)&8191] * (1 - fRec12[0]))) + (0.5f * ((fTemp10 * (((1 - fRec16[0]) * fTemp26) + (fRec16[0] * ((fRec30[1] * fTemp29) + (fTemp26 * fTemp28))))) * fRec12[0]))) * fRec36[0]);
+			output0[i] = output0[i] + (FAUSTFLOAT)(((1.5f * (fRec0[(IOTA-0)&8191] * (1 - fRec12[0]))) + (0.5f * ((fTemp10 * (((1 - fRec16[0]) * fTemp26) + (fRec16[0] * ((fRec30[1] * fTemp29) + (fTemp26 * fTemp28))))) * fRec12[0]))) * fRec36[0]);
 			// post processing
 			fRec36[1] = fRec36[0];
 			fRec30[1] = fRec30[0];

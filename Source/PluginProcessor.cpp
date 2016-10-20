@@ -54,6 +54,9 @@ struct FMVoice : public SynthesiserVoice
         
         audioBuffer = new float*[2];
         voiceIndex =x;
+        Logger::outputDebugString(std::to_string(((unsigned long long)&breathControl)));
+        Logger::outputDebugString(std::to_string(((unsigned long long)&breath)));
+
     };
     
     ~FMVoice() {
@@ -133,6 +136,7 @@ struct FMVoice : public SynthesiserVoice
     {
         // only compute block if note is on!
         if(onOff){
+            Logger::outputDebugString(std::to_string(voiceIndex));
             audioBuffer[0] = outputBuffer.getWritePointer(0, startSample);
             
             breath.compute(numSamples, NULL, audioBuffer); // computing one block with Faust
