@@ -46,6 +46,9 @@ private:
     Slider mixSlider;
     ToggleButton fluteOnButton;
     ToggleButton clarinetOnButton;
+    Slider pressureSlider;
+    Slider breathSlider;
+    Slider thirdSlider;
     
     Label frequencyLabel;
     Label gainLabel;

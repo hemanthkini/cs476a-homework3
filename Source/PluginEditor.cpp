@@ -59,6 +59,28 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     addAndMakeVisible(onOffLabel);
     onOffLabel.setText ("On/Off", dontSendNotification);
     onOffLabel.attachToComponent (&fluteOnButton, true);
+    
+    // configuring pressure slider and adding it to the main window
+    addAndMakeVisible (pressureSlider);
+    pressureSlider.setRange (0, 1.0);
+    pressureSlider.setValue(0.5);
+    pressureSlider.addListener(this);
+    pressureSlider.setLookAndFeel(&otherLookAndFeel);
+    
+    // configuring breath slider and adding it to the main window
+    addAndMakeVisible (breathSlider);
+    breathSlider.setRange (0, 1.0);
+    breathSlider.setValue(0.5);
+    breathSlider.addListener(this);
+    breathSlider.setLookAndFeel(&otherLookAndFeel);
+    
+    // configuring third slider and adding it to the main window
+    addAndMakeVisible (thirdSlider);
+    thirdSlider.setRange (0, 1.0);
+    thirdSlider.setValue(0.5);
+    thirdSlider.addListener(this);
+    thirdSlider.setLookAndFeel(&otherLookAndFeel);
+    
 }
 
 BasicAudioPlugInAudioProcessorEditor::~BasicAudioPlugInAudioProcessorEditor()
@@ -74,7 +96,7 @@ void BasicAudioPlugInAudioProcessorEditor::paint (Graphics& g)
 void BasicAudioPlugInAudioProcessorEditor::resized()
 {
     const int sliderLeft = 80;
-    gainSlider.setBounds (sliderLeft, 10, getWidth() - sliderLeft - 20, 20);
+    breathSlider.setBounds (sliderLeft, 10, getWidth() - sliderLeft - 20, 20);
     mixSlider.setBounds (sliderLeft, 40, getWidth() - sliderLeft - 20, 20);
     fluteOnButton.setBounds (sliderLeft, 70, getWidth() - sliderLeft - 20, 20);
 }
@@ -82,7 +104,7 @@ void BasicAudioPlugInAudioProcessorEditor::resized()
 void BasicAudioPlugInAudioProcessorEditor::sliderValueChanged(Slider *slider)
 {
     if (processor.samplingRate > 0.0){
-        if (slider == &gainSlider){
+        if (slider == &thirdSlider){
             //processor.sine.setFrequency(gainSlider.getValue());
         }
         else if (slider == &mixSlider){

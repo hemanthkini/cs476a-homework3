@@ -31,13 +31,15 @@ struct FMSound : public SynthesiserSound
 // to have a clear hierarchy (Sine -> FMSynth -> FMVoice)
 struct FMVoice : public SynthesiserVoice
 {
-    FMVoice():
+    FMVoice(int x):
     carrierFrequency(440.0),
     level(0.5),
     envelope(0.0),
     onOff (false),
     tailOff(false)
     {
+        //breath = new Breath();
+        // MESSAGE TO MYSELF BEFORE LEAVING FOR PITTSBURGH LOLOLOL JUST ADDED LINE ABOVE
         carrier.setSamplingRate(getSampleRate());
         Logger::outputDebugString("Successfully constructed a voice!\n");
         breath.init(getSampleRate()); // initializing the Faust module
@@ -49,7 +51,14 @@ struct FMVoice : public SynthesiserVoice
             Logger::outputDebugString(breathControl.getParamAdress(i));
             Logger::outputDebugString("\n");
         }
+        
+        audioBuffer = new float*[2];
+        voiceIndex =x;
     };
+    
+    ~FMVoice() {
+        delete[] audioBuffer;
+    }
     
     bool canPlaySound (SynthesiserSound* sound) override
     {
@@ -60,8 +69,12 @@ struct FMVoice : public SynthesiserVoice
                     SynthesiserSound*, int /*currentPitchWheelPosition*/) override
     {
         Logger::outputDebugString("Got a note start event.\n");
+        Logger::outputDebugString(std::to_string(voiceIndex));
         // converting MIDI note number into freq
         carrierFrequency = MidiMessage::getMidiNoteInHertz(midiNoteNumber);
+        
+        breathControl.setParamValue("/0x00/SFlute/Frequency", carrierFrequency);
+        breathControl.setParamValue("/0x00/SClarinet/CLARINET/Instrument/Frequency", carrierFrequency);
         
         /*
         // we don't want an ugly sweep when the note begins...
@@ -86,12 +99,21 @@ struct FMVoice : public SynthesiserVoice
         // be assigned to specific MIDI controllers. If you do so,
         // don't forget to smooth them!
         index = 150;
+        
+        breathControl.setParamValue("/0x00/SClarinet/CLARINET/ON/OFF", 1.0);
+        
+        breathControl.setParamValue("/0x00/SFlute/ON/OFF_(ASR_Envelope)", 1.0);
+
     }
     
     void stopNote (float /*velocity*/, bool allowTailOff) override
     {
         onOff = false; // end the note
         level = 0; // ramp envelope to 0 if tail off is allowed
+        
+        breathControl.setParamValue("0x00/SClarinet/CLARINET/ON/OFF", 0.0);
+        
+        breathControl.setParamValue("/0x00/SFlute/ON/OFF_(ASR_Envelope)", 0.0);
         
         tailOff = allowTailOff;
     }
@@ -111,21 +133,10 @@ struct FMVoice : public SynthesiserVoice
     {
         // only compute block if note is on!
         if(onOff){
-            while (--numSamples >= 0){
-                carrier.setFrequency(carrierFrequency);
-                const float currentSample = (float) carrier.tick() * level;
-                for (int i = outputBuffer.getNumChannels(); --i >= 0;){
-                    outputBuffer.addSample (i, startSample, currentSample);
-                }
-                ++startSample;
-                
-                // if tail off is disabled, we end the note right away, otherwise, we wait for envelope
-                // to reach a safe value
-                if(!onOff && (envelope < 0.001 || !tailOff)){
-                    envelope = 0;
-                    clearCurrentNote();
-                }
-            }
+            audioBuffer[0] = outputBuffer.getWritePointer(0, startSample);
+            
+            breath.compute(numSamples, NULL, audioBuffer); // computing one block with Faust
+            // Hacky way of ensuring our buttons work
         }
     }
     
@@ -134,7 +145,9 @@ private:
     Breath breath;
     MapUI breathControl;
     double carrierFrequency, index, level, envelope;
+    int voiceIndex;
     bool onOff, tailOff;
+    float** audioBuffer; // multichannel audio buffer used both for input and output
 };
 
 
@@ -149,7 +162,7 @@ BasicAudioPlugInAudioProcessor::BasicAudioPlugInAudioProcessor() : onOff (0.0), 
     int nVoices = 4;
     for (int i = 0; i < nVoices; i++)
     {
-        synth.addVoice (new FMVoice());
+        synth.addVoice (new FMVoice(i));
     }
     
     synth.clearSounds();
