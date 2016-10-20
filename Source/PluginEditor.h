@@ -16,6 +16,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "TronLookAndFeel.h"
 
 
 //==============================================================================
@@ -41,13 +42,16 @@ private:
     // access the processor object that created it.
     BasicAudioPlugInAudioProcessor& processor;
     
-    Slider frequencySlider;
     Slider gainSlider;
-    ToggleButton onOffButton;
+    Slider mixSlider;
+    ToggleButton fluteOnButton;
+    ToggleButton clarinetOnButton;
     
     Label frequencyLabel;
     Label gainLabel;
     Label onOffLabel;
+    
+    TronLookAndFeel otherLookAndFeel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BasicAudioPlugInAudioProcessorEditor)
 };

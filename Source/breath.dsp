@@ -218,4 +218,5 @@ breathPressure = breath + breath*vibrato;
 }.process);
 
 inbetween = hslider("flute = 0, clarinet = 1", 0, 0, 1, 0.01) : si.smoo;
-process = flute * (inbetween) + flute2 * (1 - inbetween);
+gain = hslider("Gain", 0.5, 0, 1, 0.01) : si.smoo;
+process = (flute * (inbetween) + flute2 * (1 - inbetween)) * gain;

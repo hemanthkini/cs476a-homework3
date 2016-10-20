@@ -13,6 +13,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "Breath.h"
 
 
 
@@ -39,6 +40,15 @@ struct FMVoice : public SynthesiserVoice
     {
         carrier.setSamplingRate(getSampleRate());
         Logger::outputDebugString("Successfully constructed a voice!\n");
+        breath.init(getSampleRate()); // initializing the Faust module
+        breath.buildUserInterface(&breathControl); // linking the Faust module to the controler
+        
+        // Print the list of parameters address of "breath"
+        // To get the current (default) value of these parameters, breathControl.getParamValue("paramPath") can be used
+        for (int i = 0; i<breathControl.getParamsCount(); i++) {
+            Logger::outputDebugString(breathControl.getParamAdress(i));
+            Logger::outputDebugString("\n");
+        }
     };
     
     bool canPlaySound (SynthesiserSound* sound) override
@@ -121,6 +131,8 @@ struct FMVoice : public SynthesiserVoice
     
 private:
     Sine carrier;
+    Breath breath;
+    MapUI breathControl;
     double carrierFrequency, index, level, envelope;
     bool onOff, tailOff;
 };
@@ -206,8 +218,8 @@ void BasicAudioPlugInAudioProcessor::changeProgramName (int index, const String&
 void BasicAudioPlugInAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     samplingRate = sampleRate;
-    sine.setSamplingRate(sampleRate);
-    sine.setFrequency(1000); // default value for frequency
+    //sine.setSamplingRate(sampleRate);
+    //sine.setFrequency(1000); // default value for frequency
     synth.setCurrentPlaybackSampleRate (sampleRate);
 }
 

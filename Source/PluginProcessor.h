@@ -57,7 +57,7 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    Sine sine;
+    //Sine sine;
     
     float onOff, gain;
     int samplingRate;
