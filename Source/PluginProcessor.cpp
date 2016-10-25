@@ -144,6 +144,38 @@ struct FMVoice : public SynthesiserVoice
         breathControl.setParamValue("/0x00/Gain", level);
     }
     
+    void setMix (float level) {
+        breathControl.setParamValue("/0x00/flute_=_0,_clarinet_=_1", level);
+    }
+    
+    void setFluteBreath(float level) {
+        breathControl.setParamValue("/0x00/SFlute/Breath_Noise", level);
+    }
+    
+    float getFluteBreath() {
+        breathControl.getParamValue("/0x00/SFlute/Breath_Noise");
+    }
+    
+    /* Addresses of Synth Controls: 
+     
+     /0x00/Gain
+     /0x00/flute_=_0,_clarinet_=_1
+     
+     /0x00/SClarinet/CLARINET/Instrument/Frequency
+     /0x00/SClarinet/CLARINET/ON/OFF
+     
+     /0x00/SFlute/Frequency
+     /0x00/SFlute/ON/OFF_(ASR_Envelope)
+     
+     /0x00/SClarinet/CLARINET/Parameters/Breath_Noise
+     /0x00/SClarinet/CLARINET/Parameters/Pressure
+     /0x00/SClarinet/CLARINET/Parameters/Instrument_Stiffness
+     
+     /0x00/SFlute/Breath_Noise
+     /0x00/SFlute/Pressure
+     /0x00/SFlute/Vibrato_Freq_(Vibrato_Envelope)
+     */
+    
 private:
     Sine carrier;
     Breath breath;
@@ -346,3 +378,5 @@ void BasicAudioPlugInAudioProcessor::setClarinetBreath (float x){ }
 void BasicAudioPlugInAudioProcessor::setFluteBreath (float x){ }
 void BasicAudioPlugInAudioProcessor::setClarinetThird (float x){ }
 void BasicAudioPlugInAudioProcessor::setFluteThird (float x){ }
+
+
