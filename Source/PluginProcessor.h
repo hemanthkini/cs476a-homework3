@@ -57,6 +57,19 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    //==============================================================================
+    // GUI callbacks to synthesizer
+    void setGain (float x);
+    void setMix (float x);
+    void setClarinetPressure (float x);
+    void setFlutePressure (float x);
+    void setClarinetBreath (float x);
+    void setFluteBreath (float x);
+    void setClarinetThird (float x);
+    void setFluteThird (float x);
+    
+    
+    
     //Sine sine;
     
     float onOff, gain;

@@ -140,6 +140,10 @@ struct FMVoice : public SynthesiserVoice
         }
     }
     
+    void setGain(float level) {
+        breathControl.setParamValue("/0x00/Gain", level);
+    }
+    
 private:
     Sine carrier;
     Breath breath;
@@ -320,3 +324,25 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new BasicAudioPlugInAudioProcessor();
 }
+
+// GUI Callback methods - handle update from GUI, pass it along to each voice
+
+void BasicAudioPlugInAudioProcessor::setGain (float x) {
+    int numVoices = synth.getNumVoices();
+    for (int i = 0; i < numVoices; i++) {
+        ((FMVoice *)synth.getVoice(i))->setGain(x);
+    }
+}
+
+
+
+void BasicAudioPlugInAudioProcessor::setMix (float x) {
+    
+}
+
+void BasicAudioPlugInAudioProcessor::setClarinetPressure (float x){ }
+void BasicAudioPlugInAudioProcessor::setFlutePressure (float x){ }
+void BasicAudioPlugInAudioProcessor::setClarinetBreath (float x){ }
+void BasicAudioPlugInAudioProcessor::setFluteBreath (float x){ }
+void BasicAudioPlugInAudioProcessor::setClarinetThird (float x){ }
+void BasicAudioPlugInAudioProcessor::setFluteThird (float x){ }
