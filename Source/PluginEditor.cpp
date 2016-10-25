@@ -22,7 +22,7 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (600, 100);
+    setSize (400, 400);
     
     // configuring frequency slider and adding it to the main window
     addAndMakeVisible (gainSlider);
@@ -31,10 +31,10 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     gainSlider.addListener(this);
     gainSlider.setLookAndFeel(&otherLookAndFeel);
     
-    // configuring frequency label box and adding it to the main window
-    addAndMakeVisible(frequencyLabel);
-    frequencyLabel.setText ("Frequency", dontSendNotification);
-    frequencyLabel.attachToComponent (&gainSlider, true);
+    // configuring gain label box and adding it to the main window
+    addAndMakeVisible(gainLabel);
+    gainLabel.setText ("Gain", dontSendNotification);
+    gainLabel.attachToComponent (&gainSlider, true);
     
     
     // configuring gain slider and adding it to the main window
@@ -42,12 +42,12 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     mixSlider.setRange (0.0, 1.0);
     mixSlider.setValue(0.5);
     mixSlider.addListener (this);
+    mixSlider.setLookAndFeel(&otherLookAndFeel);
     
-    
-    // configuring gain label and adding it to the main window
-    addAndMakeVisible(gainLabel);
-    gainLabel.setText ("Gain", dontSendNotification);
-    gainLabel.attachToComponent (&mixSlider, true);
+    // configuring mix label and adding it to the main window
+    addAndMakeVisible(mixLabel);
+    mixLabel.setText ("Mix", dontSendNotification);
+    mixLabel.attachToComponent (&mixSlider, true);
     
     
     // configuring on/off button and adding it to the main window
@@ -55,24 +55,48 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     fluteOnButton.addListener(this);
     fluteOnButton.setLookAndFeel(&otherLookAndFeel);
     
-    // configuring on/off label and adding it to the main window
-    addAndMakeVisible(onOffLabel);
-    onOffLabel.setText ("On/Off", dontSendNotification);
-    onOffLabel.attachToComponent (&fluteOnButton, true);
+    // configuring flute label and adding it to the main window
+    addAndMakeVisible(fluteOnLabel);
+    fluteOnLabel.setText ("Flute", dontSendNotification);
+    fluteOnLabel.attachToComponent (&fluteOnButton, true);
     
+    // configuring on/off button and adding it to the main window
+    addAndMakeVisible(clarinetOnButton);
+    clarinetOnButton.addListener(this);
+    clarinetOnButton.setLookAndFeel(&otherLookAndFeel);
+    
+    // configuring clarinet label and adding it to the main window
+    addAndMakeVisible(clarinetOnLabel);
+    clarinetOnLabel.setText ("Clarinet", dontSendNotification);
+    clarinetOnLabel.attachToComponent (&clarinetOnButton, true);
+
+
+
     // configuring pressure slider and adding it to the main window
     addAndMakeVisible (pressureSlider);
     pressureSlider.setRange (0, 1.0);
     pressureSlider.setValue(0.5);
     pressureSlider.addListener(this);
     pressureSlider.setLookAndFeel(&otherLookAndFeel);
-    
+
+    // configuring pressure label and adding it to the main window
+    addAndMakeVisible(pressureLabel);
+    pressureLabel.setText ("Pressure", dontSendNotification);
+    pressureLabel.attachToComponent (&pressureSlider, true);
+
+
     // configuring breath slider and adding it to the main window
     addAndMakeVisible (breathSlider);
     breathSlider.setRange (0, 1.0);
     breathSlider.setValue(0.5);
     breathSlider.addListener(this);
     breathSlider.setLookAndFeel(&otherLookAndFeel);
+
+    // configuring breath label and adding it to the main window
+    addAndMakeVisible(breathLabel);
+    breathLabel.setText ("Breath", dontSendNotification);
+    breathLabel.attachToComponent (&breathSlider, true);
+
     
     // configuring third slider and adding it to the main window
     addAndMakeVisible (thirdSlider);
@@ -81,6 +105,11 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     thirdSlider.addListener(this);
     thirdSlider.setLookAndFeel(&otherLookAndFeel);
     
+    // configuring pressure label and adding it to the main window
+    addAndMakeVisible(thirdLabel);
+    thirdLabel.setText ("Third", dontSendNotification);
+    thirdLabel.attachToComponent (&thirdSlider, true);
+
 }
 
 BasicAudioPlugInAudioProcessorEditor::~BasicAudioPlugInAudioProcessorEditor()
@@ -96,9 +125,24 @@ void BasicAudioPlugInAudioProcessorEditor::paint (Graphics& g)
 void BasicAudioPlugInAudioProcessorEditor::resized()
 {
     const int sliderLeft = 80;
-    breathSlider.setBounds (sliderLeft, 10, getWidth() - sliderLeft - 20, 20);
-    mixSlider.setBounds (sliderLeft, 40, getWidth() - sliderLeft - 20, 20);
-    fluteOnButton.setBounds (sliderLeft, 70, getWidth() - sliderLeft - 20, 20);
+    int heightIncrement = 30;
+    int heightOfNextElement = 10;
+    gainSlider.setBounds (sliderLeft, heightOfNextElement, getWidth() - sliderLeft - 20, 20);
+    heightOfNextElement += heightIncrement;
+    mixSlider.setBounds (sliderLeft, heightOfNextElement, getWidth() - sliderLeft - 20, 20);
+    heightOfNextElement += heightIncrement;
+    fluteOnButton.setBounds (sliderLeft, heightOfNextElement, 40, 20);
+    clarinetOnButton.setBounds (sliderLeft + 200, heightOfNextElement, 40, 20);
+    heightOfNextElement += heightIncrement;
+    
+    pressureSlider.setBounds (sliderLeft, heightOfNextElement, getWidth() - sliderLeft - 20, 20);
+    heightOfNextElement += heightIncrement;
+    breathSlider.setBounds (sliderLeft, heightOfNextElement, getWidth() - sliderLeft - 20, 20);
+    heightOfNextElement += heightIncrement;
+    thirdSlider.setBounds (sliderLeft, heightOfNextElement, getWidth() - sliderLeft - 20, 20);
+    heightOfNextElement += heightIncrement;
+    
+
 }
 
 void BasicAudioPlugInAudioProcessorEditor::sliderValueChanged(Slider *slider)

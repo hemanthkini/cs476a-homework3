@@ -53,10 +53,7 @@ struct FMVoice : public SynthesiserVoice
         }
         
         audioBuffer = new float*[2];
-        voiceIndex =x;
-        Logger::outputDebugString(std::to_string(((unsigned long long)&breathControl)));
-        Logger::outputDebugString(std::to_string(((unsigned long long)&breath)));
-
+        voiceIndex = x;
     };
     
     ~FMVoice() {
@@ -114,7 +111,7 @@ struct FMVoice : public SynthesiserVoice
         onOff = false; // end the note
         level = 0; // ramp envelope to 0 if tail off is allowed
         
-        breathControl.setParamValue("0x00/SClarinet/CLARINET/ON/OFF", 0.0);
+        breathControl.setParamValue("/0x00/SClarinet/CLARINET/ON/OFF", 0.0);
         
         breathControl.setParamValue("/0x00/SFlute/ON/OFF_(ASR_Envelope)", 0.0);
         
@@ -140,7 +137,6 @@ struct FMVoice : public SynthesiserVoice
             audioBuffer[0] = outputBuffer.getWritePointer(0, startSample);
             
             breath.compute(numSamples, NULL, audioBuffer); // computing one block with Faust
-            // Hacky way of ensuring our buttons work
         }
     }
     

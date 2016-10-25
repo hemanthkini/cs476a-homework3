@@ -47,12 +47,16 @@ private:
     ToggleButton fluteOnButton;
     ToggleButton clarinetOnButton;
     Slider pressureSlider;
+    Label pressureLabel;
     Slider breathSlider;
+    Label breathLabel;
     Slider thirdSlider;
+    Label thirdLabel;
     
-    Label frequencyLabel;
     Label gainLabel;
-    Label onOffLabel;
+    Label mixLabel;
+    Label fluteOnLabel;
+    Label clarinetOnLabel;
     
     TronLookAndFeel otherLookAndFeel;
     
