@@ -152,16 +152,24 @@ void BasicAudioPlugInAudioProcessorEditor::sliderValueChanged(Slider *slider)
             //processor.sine.setFrequency(gainSlider.getValue());
         }
         else if (slider == &mixSlider){
-            processor.gain = mixSlider.getValue();
+            processor.setMix(mixSlider.getValue());
         }
     }
 }
 
 void BasicAudioPlugInAudioProcessorEditor::buttonClicked(Button *button){
-    if(button == &fluteOnButton && fluteOnButton.getToggleState()){
-        processor.onOff = 1.0;
+    if(button == &fluteOnButton){
+        clarinetOnButton.setToggleState(false, dontSendNotification);
+        fluteOnButton.setToggleState(true, dontSendNotification);
+        
+        // TODO populate flute stuff
+        
     }
-    else{
-        processor.onOff = 0.0;
+    else if (button == &clarinetOnButton) {
+        fluteOnButton.setToggleState(false, dontSendNotification);
+        clarinetOnButton.setToggleState(true, dontSendNotification);
+        
+        // TODO Populate clarinet stuff
+        
     }
 }

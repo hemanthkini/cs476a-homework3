@@ -168,7 +168,7 @@ struct FMVoice : public SynthesiserVoice
      /0x00/SFlute/ON/OFF_(ASR_Envelope)
      
      /0x00/SClarinet/CLARINET/Parameters/Breath_Noise
-     /0x00/SClarinet/CLARINET/Parameters/Pressure
+     /0x00/SClarinet/CLARINET/Parameters/Third
      /0x00/SClarinet/CLARINET/Parameters/Instrument_Stiffness
      
      /0x00/SFlute/Breath_Noise
@@ -369,14 +369,53 @@ void BasicAudioPlugInAudioProcessor::setGain (float x) {
 
 
 void BasicAudioPlugInAudioProcessor::setMix (float x) {
-    
+    int numVoices = synth.getNumVoices();
+    for (int i = 0; i < numVoices; i++) {
+        ((FMVoice *)synth.getVoice(i))->setMix(x);
+    }
 }
 
-void BasicAudioPlugInAudioProcessor::setClarinetPressure (float x){ }
-void BasicAudioPlugInAudioProcessor::setFlutePressure (float x){ }
-void BasicAudioPlugInAudioProcessor::setClarinetBreath (float x){ }
-void BasicAudioPlugInAudioProcessor::setFluteBreath (float x){ }
-void BasicAudioPlugInAudioProcessor::setClarinetThird (float x){ }
-void BasicAudioPlugInAudioProcessor::setFluteThird (float x){ }
+void BasicAudioPlugInAudioProcessor::setClarinetPressure (float x){
+    int numVoices = synth.getNumVoices();
+    for (int i = 0; i < numVoices; i++) {
+        ((FMVoice *)synth.getVoice(i))->setClarinetPressure(x);
+    }
+}
+
+void BasicAudioPlugInAudioProcessor::setFlutePressure (float x){
+    int numVoices = synth.getNumVoices();
+    for (int i = 0; i < numVoices; i++) {
+        ((FMVoice *)synth.getVoice(i))->setFlutePressure(x);
+    }
+}
+
+void BasicAudioPlugInAudioProcessor::setClarinetBreath (float x){
+    int numVoices = synth.getNumVoices();
+    for (int i = 0; i < numVoices; i++) {
+        ((FMVoice *)synth.getVoice(i))->setClarinetBreath(x);
+    }
+}
+
+void BasicAudioPlugInAudioProcessor::setFluteBreath (float x){
+    int numVoices = synth.getNumVoices();
+    for (int i = 0; i < numVoices; i++) {
+        ((FMVoice *)synth.getVoice(i))->setFluteBreath(x);
+    }
+}
+
+void BasicAudioPlugInAudioProcessor::setClarinetThird (float x){
+    int numVoices = synth.getNumVoices();
+    for (int i = 0; i < numVoices; i++) {
+        ((FMVoice *)synth.getVoice(i))->setClarinetThird(x);
+    }
+}
+
+void BasicAudioPlugInAudioProcessor::setFluteThird (float x){
+    int numVoices = synth.getNumVoices();
+    for (int i = 0; i < numVoices; i++) {
+        ((FMVoice *)synth.getVoice(i))->setFluteThird(x);
+    }
+}
+
 
 
