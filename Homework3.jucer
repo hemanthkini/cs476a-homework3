@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="SckG7L" name="Homework3" projectType="audioplug" version="1.0.0"
               bundleIdentifier="com.yourcompany.HemanthHW3" includeBinaryInAppConfig="1"
-              buildVST="1" buildVST3="0" buildAU="0" buildAUv3="0" buildRTAS="0"
+              buildVST="1" buildVST3="1" buildAU="0" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="Homework3" pluginDesc="Polyphonic Synth Plugin"
               pluginManufacturer="hemanthkini" pluginManufacturerCode="Manu"
               pluginCode="Sckg" pluginChannelConfigs="" pluginIsSynth="1" pluginWantsMidiIn="1"
@@ -14,7 +14,6 @@
     <GROUP id="{EF6B26BF-0D29-4094-89A8-B88AA2C5384B}" name="Source">
       <FILE id="oF27E4" name="TronLookAndFeel.h" compile="0" resource="0"
             file="Source/TronLookAndFeel.h"/>
-      <FILE id="UzUOqJ" name="Sine.h" compile="0" resource="0" file="Source/Sine.h"/>
       <FILE id="elMOPS" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="pWPSSM" name="PluginProcessor.h" compile="0" resource="0"
