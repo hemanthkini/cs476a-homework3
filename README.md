@@ -2,7 +2,7 @@
 
 Polyphonic (four-voice) wind synth, morphing between a clarinet and a flute, with pressure, breath, and an additional control for each. Contains very ugly, repetitive C++ GUI code, but sounds and looks decent.
 
-Design-wise, I continued using my Iron-inspired look.
+Design-wise, I continued using my Tron-inspired look.
 
 Hemanth Kini (hkini@stanford.edu)
 
