@@ -36,6 +36,11 @@ public:
     void resized() override;
     void sliderValueChanged (Slider* slider) override;
     void buttonClicked (Button* button) override;
+    
+    //==============================================================================
+    // Populate third slider's GUI based on toggle
+    void populateFlute();
+    void populateClarinet();
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -53,6 +58,7 @@ private:
     Slider thirdSlider;
     Label thirdLabel;
     
+    Label titleLabel;
     Label gainLabel;
     Label mixLabel;
     Label fluteOnLabel;

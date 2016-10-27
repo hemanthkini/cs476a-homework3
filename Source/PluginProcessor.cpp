@@ -52,6 +52,7 @@ struct FMVoice : public SynthesiserVoice
             Logger::outputDebugString("\n");
         }
         
+        // Create audio buffer
         audioBuffer = new float*[2];
         voiceIndex = x;
     };
@@ -65,6 +66,7 @@ struct FMVoice : public SynthesiserVoice
         return dynamic_cast<FMSound*> (sound) != nullptr;
     }
     
+    // Create note start.
     void startNote (int midiNoteNumber, float velocity,
                     SynthesiserSound*, int /*currentPitchWheelPosition*/) override
     {
@@ -75,16 +77,6 @@ struct FMVoice : public SynthesiserVoice
         
         breathControl.setParamValue("/0x00/SFlute/Frequency", carrierFrequency);
         breathControl.setParamValue("/0x00/SClarinet/CLARINET/Instrument/Frequency", carrierFrequency);
-        
-        /*
-        // we don't want an ugly sweep when the note begins...
-        smooth[0].setSmooth(0);
-        smooth[0].tick(carrierFrequency);
-        
-        // standard smoothing...
-        for(int i=0; i<2; i++){
-            smooth[i].setSmooth(0.999);
-        } */
         
         //level = velocity;
         level = pow(velocity,2); // if we want linear dynamic
@@ -133,7 +125,7 @@ struct FMVoice : public SynthesiserVoice
     {
         // only compute block if note is on!
         if(onOff){
-            Logger::outputDebugString(std::to_string(voiceIndex));
+            //Logger::outputDebugString(std::to_string(voiceIndex));
             audioBuffer[0] = outputBuffer.getWritePointer(0, startSample);
             
             breath.compute(numSamples, NULL, audioBuffer); // computing one block with Faust
@@ -153,10 +145,53 @@ struct FMVoice : public SynthesiserVoice
     }
     
     float getFluteBreath() {
-        breathControl.getParamValue("/0x00/SFlute/Breath_Noise");
+        return breathControl.getParamValue("/0x00/SFlute/Breath_Noise");
     }
     
-    /* Addresses of Synth Controls: 
+    void setFlutePressure(float level) {
+        breathControl.setParamValue("/0x00/SFlute/Pressure", level);
+    }
+    
+    float getFlutePressure() {
+        return breathControl.getParamValue("/0x00/SFlute/Pressure");
+    }
+    
+    void setFluteThird(float level) {
+        breathControl.setParamValue("/0x00/SFlute/Vibrato_Freq_(Vibrato_Envelope)", level);
+    }
+    
+    float getFluteThird() {
+        return breathControl.getParamValue("/0x00/SFlute/Vibrato_Freq_(Vibrato_Envelope)");
+    }
+    
+    void setClarinetBreath(float level) {
+        breathControl.setParamValue("/0x00/SClarinet/CLARINET/Parameters/Breath_Noise", level);
+    }
+    
+    float getClarinetBreath() {
+        return breathControl.getParamValue("/0x00/SClarinet/CLARINET/Parameters/Breath_Noise");
+    }
+    
+    void setClarinetPressure(float level) {
+        breathControl.setParamValue("/0x00/SClarinet/CLARINET/Parameters/Pressure", level);
+    }
+    
+    float getClarinetPressure() {
+        return breathControl.getParamValue("/0x00/SClarinet/CLARINET/Parameters/Pressure");
+    }
+    
+    void setClarinetThird(float level) {
+        Logger::outputDebugString(std::to_string(level));
+        breathControl.setParamValue("/0x00/SClarinet/CLARINET/Parameters/Instrument_Stiffness", level);
+        Logger::outputDebugString("Set clarinet third!");
+    }
+    
+    float getClarinetThird() {
+        return breathControl.getParamValue("/0x00/SClarinet/CLARINET/Parameters/Instrument_Stiffness");
+    }
+    
+    
+    /* Addresses of Synth Controls:
      
      /0x00/Gain
      /0x00/flute_=_0,_clarinet_=_1
@@ -167,7 +202,7 @@ struct FMVoice : public SynthesiserVoice
      /0x00/SFlute/Frequency
      /0x00/SFlute/ON/OFF_(ASR_Envelope)
      
-     /0x00/SClarinet/CLARINET/Parameters/Breath_Noise
+     /0x00/SClarinet/CLARINET/Parameters/Pressure_Noise
      /0x00/SClarinet/CLARINET/Parameters/Third
      /0x00/SClarinet/CLARINET/Parameters/Instrument_Stiffness
      
@@ -382,11 +417,19 @@ void BasicAudioPlugInAudioProcessor::setClarinetPressure (float x){
     }
 }
 
+float BasicAudioPlugInAudioProcessor::getClarinetPressure (){
+    return ((FMVoice *)synth.getVoice(0))->getClarinetPressure();
+}
+
 void BasicAudioPlugInAudioProcessor::setFlutePressure (float x){
     int numVoices = synth.getNumVoices();
     for (int i = 0; i < numVoices; i++) {
         ((FMVoice *)synth.getVoice(i))->setFlutePressure(x);
     }
+}
+
+float BasicAudioPlugInAudioProcessor::getFlutePressure (){
+    return ((FMVoice *)synth.getVoice(0))->getFlutePressure();
 }
 
 void BasicAudioPlugInAudioProcessor::setClarinetBreath (float x){
@@ -396,12 +439,21 @@ void BasicAudioPlugInAudioProcessor::setClarinetBreath (float x){
     }
 }
 
+float BasicAudioPlugInAudioProcessor::getClarinetBreath (){
+    return ((FMVoice *)synth.getVoice(0))->getClarinetBreath();
+}
+
 void BasicAudioPlugInAudioProcessor::setFluteBreath (float x){
     int numVoices = synth.getNumVoices();
     for (int i = 0; i < numVoices; i++) {
         ((FMVoice *)synth.getVoice(i))->setFluteBreath(x);
     }
 }
+
+float BasicAudioPlugInAudioProcessor::getFluteBreath (){
+    return ((FMVoice *)synth.getVoice(0))->getFluteBreath();
+}
+
 
 void BasicAudioPlugInAudioProcessor::setClarinetThird (float x){
     int numVoices = synth.getNumVoices();
@@ -410,11 +462,20 @@ void BasicAudioPlugInAudioProcessor::setClarinetThird (float x){
     }
 }
 
+float BasicAudioPlugInAudioProcessor::getClarinetThird (){
+    return ((FMVoice *)synth.getVoice(0))->getClarinetThird();
+}
+
+
 void BasicAudioPlugInAudioProcessor::setFluteThird (float x){
     int numVoices = synth.getNumVoices();
     for (int i = 0; i < numVoices; i++) {
         ((FMVoice *)synth.getVoice(i))->setFluteThird(x);
     }
+}
+
+float BasicAudioPlugInAudioProcessor::getFluteThird (){
+    return ((FMVoice *)synth.getVoice(0))->getFluteThird();
 }
 
 

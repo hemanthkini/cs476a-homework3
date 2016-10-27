@@ -68,6 +68,13 @@ public:
     void setClarinetThird (float x);
     void setFluteThird (float x);
     
+    float getClarinetPressure ();
+    float getFlutePressure ();
+    float getClarinetBreath ();
+    float getFluteBreath ();
+    float getClarinetThird ();
+    float getFluteThird ();
+    
     
     
     //Sine sine;

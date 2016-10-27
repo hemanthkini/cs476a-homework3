@@ -30,7 +30,7 @@ public:
         // Fill in the slider.
         g.fillRect((float)x, top_left, sliderPos - minSliderPos, height_of_slider);
         
-        
+        s.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, false, 0, 0);
     }
     
     // Make a TRON button

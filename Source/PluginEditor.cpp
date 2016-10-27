@@ -22,7 +22,12 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 400);
+    setSize (400, 300);
+    
+    // configuring gain label box and adding it to the main window
+    addAndMakeVisible(titleLabel);
+    titleLabel.setText ("HEMANTH'S CLARINET/FLUTE SYNTH", dontSendNotification);
+    titleLabel.setColour(Label::textColourId, Colours::limegreen);
     
     // configuring frequency slider and adding it to the main window
     addAndMakeVisible (gainSlider);
@@ -35,7 +40,7 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     addAndMakeVisible(gainLabel);
     gainLabel.setText ("Gain", dontSendNotification);
     gainLabel.attachToComponent (&gainSlider, true);
-    
+    gainLabel.setColour(Label::textColourId, Colours::limegreen);
     
     // configuring gain slider and adding it to the main window
     addAndMakeVisible (mixSlider);
@@ -48,6 +53,7 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     addAndMakeVisible(mixLabel);
     mixLabel.setText ("Mix", dontSendNotification);
     mixLabel.attachToComponent (&mixSlider, true);
+    mixLabel.setColour(Label::textColourId, Colours::limegreen);
     
     
     // configuring on/off button and adding it to the main window
@@ -59,6 +65,7 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     addAndMakeVisible(fluteOnLabel);
     fluteOnLabel.setText ("Flute", dontSendNotification);
     fluteOnLabel.attachToComponent (&fluteOnButton, true);
+    fluteOnLabel.setColour(Label::textColourId, Colours::limegreen);
     
     // configuring on/off button and adding it to the main window
     addAndMakeVisible(clarinetOnButton);
@@ -69,7 +76,8 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     addAndMakeVisible(clarinetOnLabel);
     clarinetOnLabel.setText ("Clarinet", dontSendNotification);
     clarinetOnLabel.attachToComponent (&clarinetOnButton, true);
-
+    clarinetOnLabel.setColour(Label::textColourId, Colours::limegreen);
+    
 
 
     // configuring pressure slider and adding it to the main window
@@ -83,7 +91,8 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     addAndMakeVisible(pressureLabel);
     pressureLabel.setText ("Pressure", dontSendNotification);
     pressureLabel.attachToComponent (&pressureSlider, true);
-
+    pressureLabel.setColour(Label::textColourId, Colours::limegreen);
+    
 
     // configuring breath slider and adding it to the main window
     addAndMakeVisible (breathSlider);
@@ -96,7 +105,8 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     addAndMakeVisible(breathLabel);
     breathLabel.setText ("Breath", dontSendNotification);
     breathLabel.attachToComponent (&breathSlider, true);
-
+    breathLabel.setColour(Label::textColourId, Colours::limegreen);
+    
     
     // configuring third slider and adding it to the main window
     addAndMakeVisible (thirdSlider);
@@ -109,7 +119,15 @@ BasicAudioPlugInAudioProcessorEditor::BasicAudioPlugInAudioProcessorEditor (Basi
     addAndMakeVisible(thirdLabel);
     thirdLabel.setText ("Third", dontSendNotification);
     thirdLabel.attachToComponent (&thirdSlider, true);
-
+    thirdLabel.setColour(Label::textColourId, Colours::limegreen);
+    
+    
+    // Start off with flute set
+    clarinetOnButton.setToggleState(false, dontSendNotification);
+    fluteOnButton.setToggleState(true, dontSendNotification);
+    
+    // populate the GUI with the flute settings
+    populateFlute();
 }
 
 BasicAudioPlugInAudioProcessorEditor::~BasicAudioPlugInAudioProcessorEditor()
@@ -119,7 +137,7 @@ BasicAudioPlugInAudioProcessorEditor::~BasicAudioPlugInAudioProcessorEditor()
 //==============================================================================
 void BasicAudioPlugInAudioProcessorEditor::paint (Graphics& g)
 {
-    g.fillAll (Colours::lightgrey);
+    g.fillAll (Colours::black);
 }
 
 void BasicAudioPlugInAudioProcessorEditor::resized()
@@ -127,6 +145,8 @@ void BasicAudioPlugInAudioProcessorEditor::resized()
     const int sliderLeft = 80;
     int heightIncrement = 30;
     int heightOfNextElement = 10;
+    titleLabel.setBounds (sliderLeft, heightOfNextElement, getWidth() - sliderLeft, 20);
+    heightOfNextElement += heightIncrement;
     gainSlider.setBounds (sliderLeft, heightOfNextElement, getWidth() - sliderLeft - 20, 20);
     heightOfNextElement += heightIncrement;
     mixSlider.setBounds (sliderLeft, heightOfNextElement, getWidth() - sliderLeft - 20, 20);
@@ -149,12 +169,51 @@ void BasicAudioPlugInAudioProcessorEditor::sliderValueChanged(Slider *slider)
 {
     if (processor.samplingRate > 0.0){
         if (slider == &thirdSlider){
-            //processor.sine.setFrequency(gainSlider.getValue());
+            if (fluteOnButton.getToggleState()) {
+                processor.setFluteThird(static_cast<float>(thirdSlider.getValue()));
+            } else {
+                Logger::outputDebugString("Setting clarinet third.");
+                Logger::outputDebugString(std::to_string(thirdSlider.getValue()));
+                processor.setClarinetThird(static_cast<float>(thirdSlider.getValue()));
+                Logger::outputDebugString(std::to_string(processor.getClarinetThird()));
+            }
+        }
+        else if (slider == &breathSlider){
+            if (fluteOnButton.getToggleState()) {
+                processor.setFluteBreath(static_cast<float>(breathSlider.getValue()));
+            } else {
+                processor.setClarinetBreath(static_cast<float>(breathSlider.getValue()));
+            }
+        }
+        else if (slider == &pressureSlider){
+            if (fluteOnButton.getToggleState()) {
+                processor.setFlutePressure(static_cast<float>(pressureSlider.getValue()));
+            } else {
+                processor.setClarinetPressure(static_cast<float>(pressureSlider.getValue()));
+            }
         }
         else if (slider == &mixSlider){
             processor.setMix(mixSlider.getValue());
         }
+        else if (slider == &gainSlider) {
+            processor.setGain(gainSlider.getValue());
+        }
     }
+}
+
+void BasicAudioPlugInAudioProcessorEditor::populateFlute(){
+    pressureSlider.setValue(static_cast<double>(processor.getFlutePressure()));
+    breathSlider.setValue(static_cast<double>(processor.getFluteBreath()));
+    thirdSlider.setValue(static_cast<double>(processor.getFluteThird()));
+    thirdLabel.setText("Vibrato", dontSendNotification);
+}
+
+void BasicAudioPlugInAudioProcessorEditor::populateClarinet(){
+    pressureSlider.setValue(static_cast<double>(processor.getClarinetPressure()));
+    breathSlider.setValue(static_cast<double>(processor.getClarinetBreath()));
+    thirdSlider.setValue(static_cast<double>(processor.getClarinetThird()));
+    Logger::outputDebugString(std::to_string(processor.getClarinetThird()));
+    thirdLabel.setText("Stiffness", dontSendNotification);
 }
 
 void BasicAudioPlugInAudioProcessorEditor::buttonClicked(Button *button){
@@ -162,14 +221,14 @@ void BasicAudioPlugInAudioProcessorEditor::buttonClicked(Button *button){
         clarinetOnButton.setToggleState(false, dontSendNotification);
         fluteOnButton.setToggleState(true, dontSendNotification);
         
-        // TODO populate flute stuff
-        
+        // populate the GUI with the flute settings
+        populateFlute();
     }
     else if (button == &clarinetOnButton) {
         fluteOnButton.setToggleState(false, dontSendNotification);
         clarinetOnButton.setToggleState(true, dontSendNotification);
         
-        // TODO Populate clarinet stuff
-        
+        // populate the GUI with the clarinet settings
+        populateClarinet();
     }
 }

@@ -12,6 +12,8 @@
               jucerVersion="4.2.4">
   <MAINGROUP id="sqV3fD" name="Homework3">
     <GROUP id="{EF6B26BF-0D29-4094-89A8-B88AA2C5384B}" name="Source">
+      <FILE id="oF27E4" name="TronLookAndFeel.h" compile="0" resource="0"
+            file="Source/TronLookAndFeel.h"/>
       <FILE id="UzUOqJ" name="Sine.h" compile="0" resource="0" file="Source/Sine.h"/>
       <FILE id="elMOPS" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
