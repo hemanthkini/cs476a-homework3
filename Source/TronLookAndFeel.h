@@ -46,6 +46,7 @@ public:
         }
     }
     
+    // Make a TRON toggle button.
     void drawToggleButton(Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown) override {
         Rectangle<int> buttonArea = button.getLocalBounds();
         g.setColour(Colours::limegreen);

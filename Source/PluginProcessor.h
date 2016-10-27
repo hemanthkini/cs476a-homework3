@@ -12,8 +12,6 @@
 #define PLUGINPROCESSOR_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Sine.h"
-
 
 //==============================================================================
 /**
@@ -76,8 +74,6 @@ public:
     float getFluteThird ();
     
     
-    
-    //Sine sine;
     
     float onOff, gain;
     int samplingRate;

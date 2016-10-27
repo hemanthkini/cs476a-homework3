@@ -47,6 +47,7 @@ private:
     // access the processor object that created it.
     BasicAudioPlugInAudioProcessor& processor;
     
+    // All our GUI elements.
     Slider gainSlider;
     Slider mixSlider;
     ToggleButton fluteOnButton;

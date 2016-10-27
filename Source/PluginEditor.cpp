@@ -165,17 +165,16 @@ void BasicAudioPlugInAudioProcessorEditor::resized()
 
 }
 
+// Handle all sliders.
 void BasicAudioPlugInAudioProcessorEditor::sliderValueChanged(Slider *slider)
 {
     if (processor.samplingRate > 0.0){
+        // Handle synth-specific sliders (based on which synth is toggled on.)
         if (slider == &thirdSlider){
             if (fluteOnButton.getToggleState()) {
                 processor.setFluteThird(static_cast<float>(thirdSlider.getValue()));
             } else {
-                Logger::outputDebugString("Setting clarinet third.");
-                Logger::outputDebugString(std::to_string(thirdSlider.getValue()));
                 processor.setClarinetThird(static_cast<float>(thirdSlider.getValue()));
-                Logger::outputDebugString(std::to_string(processor.getClarinetThird()));
             }
         }
         else if (slider == &breathSlider){
@@ -192,6 +191,7 @@ void BasicAudioPlugInAudioProcessorEditor::sliderValueChanged(Slider *slider)
                 processor.setClarinetPressure(static_cast<float>(pressureSlider.getValue()));
             }
         }
+        // Handle general sliders.
         else if (slider == &mixSlider){
             processor.setMix(mixSlider.getValue());
         }
@@ -201,6 +201,8 @@ void BasicAudioPlugInAudioProcessorEditor::sliderValueChanged(Slider *slider)
     }
 }
 
+
+// Populate the GUI with flute slider values (when flute is pressed).
 void BasicAudioPlugInAudioProcessorEditor::populateFlute(){
     pressureSlider.setValue(static_cast<double>(processor.getFlutePressure()));
     breathSlider.setValue(static_cast<double>(processor.getFluteBreath()));
@@ -208,6 +210,7 @@ void BasicAudioPlugInAudioProcessorEditor::populateFlute(){
     thirdLabel.setText("Vibrato", dontSendNotification);
 }
 
+// Populate the GUI with clarinet slider values (when clarinet is pressed).
 void BasicAudioPlugInAudioProcessorEditor::populateClarinet(){
     pressureSlider.setValue(static_cast<double>(processor.getClarinetPressure()));
     breathSlider.setValue(static_cast<double>(processor.getClarinetBreath()));
@@ -216,6 +219,7 @@ void BasicAudioPlugInAudioProcessorEditor::populateClarinet(){
     thirdLabel.setText("Stiffness", dontSendNotification);
 }
 
+// Handle toggle buttons.
 void BasicAudioPlugInAudioProcessorEditor::buttonClicked(Button *button){
     if(button == &fluteOnButton){
         clarinetOnButton.setToggleState(false, dontSendNotification);

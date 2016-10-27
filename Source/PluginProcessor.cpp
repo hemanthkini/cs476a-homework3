@@ -38,9 +38,6 @@ struct FMVoice : public SynthesiserVoice
     onOff (false),
     tailOff(false)
     {
-        //breath = new Breath();
-        // MESSAGE TO MYSELF BEFORE LEAVING FOR PITTSBURGH LOLOLOL JUST ADDED LINE ABOVE
-        carrier.setSamplingRate(getSampleRate());
         Logger::outputDebugString("Successfully constructed a voice!\n");
         breath.init(getSampleRate()); // initializing the Faust module
         breath.buildUserInterface(&breathControl); // linking the Faust module to the controler
@@ -70,44 +67,33 @@ struct FMVoice : public SynthesiserVoice
     void startNote (int midiNoteNumber, float velocity,
                     SynthesiserSound*, int /*currentPitchWheelPosition*/) override
     {
-        Logger::outputDebugString("Got a note start event.\n");
-        Logger::outputDebugString(std::to_string(voiceIndex));
         // converting MIDI note number into freq
         carrierFrequency = MidiMessage::getMidiNoteInHertz(midiNoteNumber);
         
+        // Set frequency of notes.
         breathControl.setParamValue("/0x00/SFlute/Frequency", carrierFrequency);
         breathControl.setParamValue("/0x00/SClarinet/CLARINET/Instrument/Frequency", carrierFrequency);
         
-        //level = velocity;
-        level = pow(velocity,2); // if we want linear dynamic
-        Logger::outputDebugString("Level is: ");
-        Logger::outputDebugString(std::to_string(level));
-        Logger::outputDebugString("\n");
-        
-        // tells the note to begin!
-        onOff = true;
         
         // These parameters could be controlled with UI elements and could
         // be assigned to specific MIDI controllers. If you do so,
         // don't forget to smooth them!
         index = 150;
         
+        // Start notes.
         breathControl.setParamValue("/0x00/SClarinet/CLARINET/ON/OFF", 1.0);
         
         breathControl.setParamValue("/0x00/SFlute/ON/OFF_(ASR_Envelope)", 1.0);
 
     }
     
+    // Create note stop.
     void stopNote (float /*velocity*/, bool allowTailOff) override
     {
-        onOff = false; // end the note
-        level = 0; // ramp envelope to 0 if tail off is allowed
-        
         breathControl.setParamValue("/0x00/SClarinet/CLARINET/ON/OFF", 0.0);
         
         breathControl.setParamValue("/0x00/SFlute/ON/OFF_(ASR_Envelope)", 0.0);
         
-        tailOff = allowTailOff;
     }
     
     void pitchWheelMoved (int /*newValue*/) override
@@ -121,17 +107,16 @@ struct FMVoice : public SynthesiserVoice
         // if you wanted to control them with MIDI controllers
     }
     
+    // Rendering audio.
     void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override
     {
-        // only compute block if note is on!
-        if(onOff){
-            //Logger::outputDebugString(std::to_string(voiceIndex));
-            audioBuffer[0] = outputBuffer.getWritePointer(0, startSample);
+        // Always render next audio block - or else we clip. (Smoothing is built into Faust)
+        audioBuffer[0] = outputBuffer.getWritePointer(0, startSample);
             
-            breath.compute(numSamples, NULL, audioBuffer); // computing one block with Faust
-        }
+        breath.compute(numSamples, NULL, audioBuffer); // computing one block with Faust
     }
     
+    // Getters and setters for the synth parameters.
     void setGain(float level) {
         breathControl.setParamValue("/0x00/Gain", level);
     }
@@ -181,9 +166,7 @@ struct FMVoice : public SynthesiserVoice
     }
     
     void setClarinetThird(float level) {
-        Logger::outputDebugString(std::to_string(level));
         breathControl.setParamValue("/0x00/SClarinet/CLARINET/Parameters/Instrument_Stiffness", level);
-        Logger::outputDebugString("Set clarinet third!");
     }
     
     float getClarinetThird() {
@@ -191,28 +174,8 @@ struct FMVoice : public SynthesiserVoice
     }
     
     
-    /* Addresses of Synth Controls:
-     
-     /0x00/Gain
-     /0x00/flute_=_0,_clarinet_=_1
-     
-     /0x00/SClarinet/CLARINET/Instrument/Frequency
-     /0x00/SClarinet/CLARINET/ON/OFF
-     
-     /0x00/SFlute/Frequency
-     /0x00/SFlute/ON/OFF_(ASR_Envelope)
-     
-     /0x00/SClarinet/CLARINET/Parameters/Pressure_Noise
-     /0x00/SClarinet/CLARINET/Parameters/Third
-     /0x00/SClarinet/CLARINET/Parameters/Instrument_Stiffness
-     
-     /0x00/SFlute/Breath_Noise
-     /0x00/SFlute/Pressure
-     /0x00/SFlute/Vibrato_Freq_(Vibrato_Envelope)
-     */
-    
+
 private:
-    Sine carrier;
     Breath breath;
     MapUI breathControl;
     double carrierFrequency, index, level, envelope;
@@ -236,6 +199,7 @@ BasicAudioPlugInAudioProcessor::BasicAudioPlugInAudioProcessor() : onOff (0.0), 
         synth.addVoice (new FMVoice(i));
     }
     
+    // Doesn't do anything here.
     synth.clearSounds();
     synth.addSound (new FMSound());
 }
@@ -342,20 +306,6 @@ void BasicAudioPlugInAudioProcessor::processBlock (AudioSampleBuffer& buffer, Mi
 {
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
-    /* for (int channel = 0; channel < nChans; ++channel)
-    {
-        audioBuffer[channel] = buffer.getWritePointer (channel);
-    }
-    // computing one block
-    for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
-    {
-        // configuring frequency slider and adding it to the main window
-        audioBuffer[0][sample] = sine.tick()*onOff*gain;
-        for (int channel = 1; channel < nChans; ++channel)
-        {
-            audioBuffer[channel][sample] = audioBuffer[0][sample];
-        }
-    } */
     synth.renderNextBlock (buffer, midiMessages, 0, buffer.getNumSamples());
     
 }
@@ -391,6 +341,7 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new BasicAudioPlugInAudioProcessor();
 }
+
 
 // GUI Callback methods - handle update from GUI, pass it along to each voice
 
